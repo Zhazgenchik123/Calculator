@@ -1,9 +1,8 @@
 #include "afxwin.h"
-#include <atlstr.h> 
-#include <cstdlib>  
-#include <iostream>
-class CMyWindow : public CFrameWnd
-{
+#include <fstream>
+
+class CMyWindow : public CFrameWnd {
+
 public:
 	CMyWindow()
 	{
@@ -13,122 +12,148 @@ public:
 		myRect.top = 0;
 		myRect.bottom = 600;
 
-		Create(NULL, "Ïðèìåð MFC îêíà", WS_OVERLAPPEDWINDOW, myRect, nullptr, nullptr, WS_EX_WINDOWEDGE, nullptr);
+		Create(NULL, "ÐŸÑ€Ð¸Ð¼ÐµÑ€ MFC Ð¾ÐºÐ½Ð°", WS_OVERLAPPEDWINDOW, myRect, nullptr, nullptr, WS_EX_WINDOWEDGE, nullptr);
 		RECT buttonRect;
 		buttonRect.left = 10;
 		buttonRect.right = 100;
 		buttonRect.top = 10;
 		buttonRect.bottom = 40;
-		addbtn.Create("Add", WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, buttonRect, this, 1);
-		minusbtn.Create("Minus", WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
-			CRect(110, 10, 200, 40), 
-			this, 2);
-		multbtn.Create("Mult", WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
-			CRect(210, 10, 300, 40),
-			this, 3);
-		divbtn.Create("Divide", WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
-			CRect(310, 10, 400, 40),
-			this, 4);
+		myButton.Create("Okay", WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, buttonRect, this, 1);
+
+
 		RECT staticRect;
-		staticRect.left = 10;
-		staticRect.right = 100;
-		staticRect.top = 50;
-		staticRect.bottom = 70;
-		myStatic.Create("This is static text", WS_CHILD | WS_VISIBLE, staticRect, this, 5);
+		staticRect.left = 200;
+		staticRect.right = 400;
+		staticRect.top = 300;
+		staticRect.bottom = 500;
+		imageStatic.Create("", WS_CHILD | WS_VISIBLE | SS_BITMAP, staticRect, this, 2);
+		RECT staticRect2;
+		staticRect.left = 500;
+		staticRect.right = 700;
+		staticRect.top = 300;
+		staticRect.bottom = 500;
+		imageStatic2.Create("", WS_CHILD | WS_VISIBLE | SS_BITMAP, staticRect, this, 3);
 
-
-		editBox1.Create(
-			WS_VISIBLE | WS_CHILD | WS_BORDER | ES_LEFT | ES_AUTOHSCROLL,
-			CRect(10, 80 + 10, 200, 80 + 30),
-			this,
-			6);
-		editBox2.Create(
-			WS_VISIBLE | WS_CHILD | WS_BORDER | ES_LEFT | ES_AUTOHSCROLL,
-			CRect(10, 80 + 40, 200, 80 + 60),
-			this,
-			7);
-		
+		LoadFile();
 
 	}
 protected:
 
-	void OnaddbtnClicked()
+	void OnButtonClicked()
 	{
-		CString text1, text2,str ;
-		editBox1.GetWindowText(text1);
-		editBox2.GetWindowText(text2);
-		char* strAnsi1 = (char*)CT2A(text1);
-		char* strAnsi2 = (char*)CT2A(text2);
+	}
+
+	void LoadFile()
+	{
+		std::ifstream f;
+		std::ifstream s;
+
+		f.open("C:/Ñ++/first.bmp", std::ios::binary);
+		s.open("C:/Ñ++/second.bmp", std::ios::binary);
 		
-		double value1 = _tstof(text1);
-		double value2 = _tstof(text2);
-		double result = value1 + value2;
-		str.Format(_T("%f"), result);
-		MessageBox(str.GetString(), _T("My Application"), MB_OK | MB_ICONINFORMATION);
-	}
-	void OnminusbtnClicked()
-	{
-		CString text1, text2, str;
-		editBox1.GetWindowText(text1);
-		editBox2.GetWindowText(text2);
-		char* strAnsi1 = (char*)CT2A(text1);
-		char* strAnsi2 = (char*)CT2A(text2);
+		f.seekg(0, std::ios::end);
+		int fileSize1 = f.tellg();
+		f.seekg(0, std::ios::beg);
 
-		double value1 = _tstof(text1);
-		double value2 = _tstof(text2);
-		double result = value1 - value2;
-		str.Format(_T("%f"), result);
-		MessageBox(str.GetString(), _T("My Application"), MB_OK | MB_ICONINFORMATION);
-	}
-	void OnmultbtnClicked()
-	{
-		CString text1, text2, str;
-		editBox1.GetWindowText(text1);
-		editBox2.GetWindowText(text2);
-		char* strAnsi1 = (char*)CT2A(text1);
-		char* strAnsi2 = (char*)CT2A(text2);
+		s.seekg(0, std::ios::end);
+		int fileSize2 = s.tellg();
+		s.seekg(0, std::ios::beg);
 
-		double value1 = _tstof(text1);
-		double value2 = _tstof(text2);
-		double result = value1 * value2;
-		str.Format(_T("%f"), result);
-		MessageBox(str.GetString(), _T("My Application"), MB_OK | MB_ICONINFORMATION);
-	}
-	void OndivbtnClicked()
-	{
-		CString text1, text2, str;
-		editBox1.GetWindowText(text1);
-		editBox2.GetWindowText(text2);
-		char* strAnsi1 = (char*)CT2A(text1);
-		char* strAnsi2 = (char*)CT2A(text2);
+		unsigned char* bytes = new unsigned char[fileSize1];
 
-		double value1 = _tstof(text1);
-		double value2 = _tstof(text2);
-		if (value2 != 0) {
-			double result = value1 / value2;
-			str.Format(_T("%f"), result);
-			MessageBox(str.GetString(), _T("My Application"), MB_OK | MB_ICONINFORMATION);
+		unsigned char* bytes2 = new unsigned char[fileSize2];
+
+		f.read((char*)bytes, fileSize1);
+		s.read((char*)bytes2, fileSize2);
+
+		unsigned int width = bytes[18];
+
+		width = width + bytes[19] * 0x100;
+		width = width + bytes[20] * 0x10000;
+		width = width + bytes[21] * 0x1000000;
+
+		unsigned int height = bytes[22];
+
+		height = height + bytes[23] * 0x100;
+		height = height + bytes[24] * 0x10000;
+		height = height + bytes[25] * 0x1000000;
+
+		unsigned char* pointerToImageData = bytes + 138;
+		unsigned char* pointerToImageData2 = bytes2 + 138;
+
+		BITMAPINFO info;
+		BITMAPINFO info2;
+
+		info.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+		info.bmiHeader.biWidth = width;
+		info.bmiHeader.biHeight = height;
+		info.bmiHeader.biPlanes = 1;
+		info.bmiHeader.biBitCount = 24;
+		info.bmiHeader.biCompression = 0;
+		info.bmiHeader.biSizeImage = 0;
+		info.bmiHeader.biXPelsPerMeter = 0;
+		info.bmiHeader.biYPelsPerMeter = 0;
+		info.bmiHeader.biClrUsed = 0;
+		info.bmiHeader.biClrImportant = 0;
+		info.bmiColors[0].rgbBlue = 0;
+		info.bmiColors[0].rgbGreen = 0;
+		info.bmiColors[0].rgbRed = 0;
+		info.bmiColors[0].rgbReserved = 0;
+
+
+		info2.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+		info2.bmiHeader.biWidth = width;
+		info2.bmiHeader.biHeight = height;
+		info2.bmiHeader.biPlanes = 1;
+		info2.bmiHeader.biBitCount = 24;
+		info2.bmiHeader.biCompression = 0;
+		info2.bmiHeader.biSizeImage = 0;
+		info2.bmiHeader.biXPelsPerMeter = 0;
+		info2.bmiHeader.biYPelsPerMeter = 0;
+		info2.bmiHeader.biClrUsed = 0;
+		info2.bmiHeader.biClrImportant = 0;
+		info2.bmiColors[0].rgbBlue = 0;
+		info2.bmiColors[0].rgbGreen = 0;
+		info2.bmiColors[0].rgbRed = 0;
+		info2.bmiColors[0].rgbReserved = 0;
+
+		//DrawContext = DC
+		HDC hdc = this->GetDC()->m_hDC;
+		HDC hdc2 = this->GetDC()->m_hDC;
+		
+		double alpha = 0.5;
+
+		for (int i =0 ; i < height * width *3; i++)
+		{
+			pointerToImageData[i] = static_cast<unsigned char>(alpha * pointerToImageData[i] + (1 - alpha) * pointerToImageData2[i]);
+			pointerToImageData2[i] = static_cast<unsigned char>(alpha * pointerToImageData2[i] + (1 - alpha) * pointerToImageData[i]);
+
 		}
-		else {
-			MessageBox("divide on zero is unable", _T("My Application"), MB_OK | MB_ICONINFORMATION);
-		}
+	
+
+		HBITMAP bitmap = CreateDIBitmap(hdc, &info.bmiHeader, CBM_INIT, pointerToImageData, &info, 0);
+		HBITMAP bitmap2 = CreateDIBitmap(hdc2, &info2.bmiHeader, CBM_INIT, pointerToImageData2, &info2, 0);
+
+		imageStatic.SetBitmap(bitmap);
+		imageStatic2.SetBitmap(bitmap2);
+	//	imageStatic.SetBitmap(blendedBitmap);
+		f.close();
+		s.close();
+		
+		delete[] bytes;
+
+
 	}
 
-	CButton addbtn,minusbtn,multbtn,divbtn;
-	CStatic myStatic;
-	CEdit editBox1;
-	CEdit editBox2;
+	CButton myButton;
+	CStatic imageStatic, imageStatic2;
 
 	DECLARE_MESSAGE_MAP();
 };
 
 BEGIN_MESSAGE_MAP(CMyWindow, CFrameWnd)
-	ON_COMMAND(1, &CMyWindow::OnaddbtnClicked)
-	ON_COMMAND(2, &CMyWindow::OnminusbtnClicked)
-	ON_COMMAND(3, &CMyWindow::OnmultbtnClicked)
-	ON_COMMAND(4, &CMyWindow::OndivbtnClicked)
+	ON_COMMAND(1, &CMyWindow::OnButtonClicked)
 END_MESSAGE_MAP()
-
 
 class CMyApp : CWinApp
 {
